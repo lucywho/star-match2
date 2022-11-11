@@ -4,7 +4,7 @@ import StarsDisplay from "./components/StarsDisplay"
 import { utils, startArray } from "./utils"
 import { useEffect, useState } from "react"
 
-function Game() {
+function Game(props) {
     const [stars, setStars] = useState(utils.random(1, startArray.length))
     const [availableNums, setAvailableNums] = useState(startArray)
     const [candidateNums, setCandidateNums] = useState([])
@@ -63,14 +63,6 @@ function Game() {
         }
     }
 
-    //holding function - do this in App
-    function resetGame() {
-        setStars(utils.random(1, startArray.length))
-        setAvailableNums(startArray)
-        setCandidateNums([])
-        setSecondsLeft(startArray.length + 1)
-    }
-
     return (
         <div>
             <header>Game Here</header>
@@ -84,7 +76,7 @@ function Game() {
                             <StarsDisplay stars={stars} />
                         ) : (
                             <PlayAgain
-                                onClick={resetGame}
+                                onClick={props.newGame}
                                 gameStatus={gameStatus}
                             />
                         )}
