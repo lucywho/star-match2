@@ -1,6 +1,6 @@
+import "./index.css"
 import App from "./App"
 import React from "react"
-import "./index.css"
 import ReactDOM from "react-dom/client"
 import reportWebVitals from "./reportWebVitals"
 

@@ -1,24 +1,12 @@
-import PlayNumber from "./components/PlayNumber"
-import PlayAgain from "./components/PlayAgain"
-import StarsDisplay from "./components/StarsDisplay"
 import { utils, startArray } from "./utils"
-import { useEffect, useState } from "react"
+import { useGameState } from "./useGameState"
+import PlayAgain from "./components/PlayAgain"
+import PlayNumber from "./components/PlayNumber"
+import StarsDisplay from "./components/StarsDisplay"
 
 function Game(props) {
-    const [stars, setStars] = useState(utils.random(1, startArray.length))
-    const [availableNums, setAvailableNums] = useState(startArray)
-    const [candidateNums, setCandidateNums] = useState([])
-    const [secondsLeft, setSecondsLeft] = useState(startArray.length + 1)
-
-    useEffect(() => {
-        if (secondsLeft > 0 && availableNums.length > 0) {
-            const timerId = setTimeout(() => {
-                setSecondsLeft(secondsLeft - 1)
-            }, 1000)
-            return () => clearTimeout(timerId)
-        }
-    })
-
+    const { stars, availableNums, candidateNums, secondsLeft, setGameState } =
+        useGameState()
     const candidatesAreWrong = utils.sum(candidateNums) > stars
 
     const gameStatus =
@@ -50,17 +38,7 @@ function Game(props) {
                 ? candidateNums.concat(number)
                 : candidateNums.filter((can) => can !== number)
 
-        if (utils.sum(newCandidateNums) !== stars) {
-            setCandidateNums(newCandidateNums)
-        } else {
-            const newAvailableNums = availableNums.filter(
-                (num) => !newCandidateNums.includes(num)
-            )
-
-            setAvailableNums(newAvailableNums)
-            setCandidateNums([])
-            setStars(utils.randomSumIn(newAvailableNums, startArray.length))
-        }
+        setGameState(newCandidateNums)
     }
 
     return (
