@@ -1,3 +1,4 @@
+import { useCallback } from "react"
 import { utils, startArray } from "./utils"
 import { useGameState } from "./useGameState"
 import PlayAgain from "./components/PlayAgain"
@@ -5,41 +6,46 @@ import PlayNumber from "./components/PlayNumber"
 import StarsDisplay from "./components/StarsDisplay"
 
 function Game(props) {
-    const { stars, availableNums, candidateNums, secondsLeft, setGameState } =
-        useGameState()
-    const candidatesAreWrong = utils.sum(candidateNums) > stars
+    const {
+        stars,
+        availableNums,
+        candidateNums,
+        secondsLeft,
+        candidatesAreWrong,
+        gameStatus,
+        setGameState,
+    } = useGameState()
 
-    const gameStatus =
-        availableNums.length === 0
-            ? "won"
-            : secondsLeft === 0
-            ? "lost"
-            : "active"
+    const getNumberStatus = useCallback(
+        (number) => {
+            if (!availableNums.includes(number)) {
+                return "used"
+            }
 
-    function getNumberStatus(number) {
-        if (!availableNums.includes(number)) {
-            return "used"
-        }
+            if (candidateNums.includes(number)) {
+                return candidatesAreWrong ? "wrong" : "candidate"
+            }
 
-        if (candidateNums.includes(number)) {
-            return candidatesAreWrong ? "wrong" : "candidate"
-        }
+            return "available"
+        },
+        [availableNums, candidateNums, candidatesAreWrong]
+    )
 
-        return "available"
-    }
+    const onNumberClick = useCallback(
+        (number, currentStatus) => {
+            if (currentStatus === "used" || gameStatus !== "active") {
+                return
+            }
 
-    function onNumberClick(number, currentStatus) {
-        if (currentStatus === "used" || gameStatus !== "active") {
-            return
-        }
+            const newCandidateNums =
+                currentStatus === "available"
+                    ? candidateNums.concat(number)
+                    : candidateNums.filter((can) => can !== number)
 
-        const newCandidateNums =
-            currentStatus === "available"
-                ? candidateNums.concat(number)
-                : candidateNums.filter((can) => can !== number)
-
-        setGameState(newCandidateNums)
-    }
+            setGameState(newCandidateNums)
+        },
+        [candidateNums, gameStatus, setGameState]
+    )
 
     return (
         <div>
