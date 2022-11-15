@@ -29,7 +29,7 @@ function Game(props) {
     }
 
     function onNumberClick(number, currentStatus) {
-        if (currentStatus === "used") {
+        if (currentStatus === "used" || gameStatus !== "active") {
             return
         }
 
@@ -43,7 +43,7 @@ function Game(props) {
 
     return (
         <div>
-            <header>Game Here</header>
+            <header>Star Match Game</header>
             <div className="game">
                 <div className="help">
                     Pick 1 or more numbers that sum to the number of stars
